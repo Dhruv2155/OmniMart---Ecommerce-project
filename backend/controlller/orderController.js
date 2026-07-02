@@ -79,8 +79,11 @@ Best regards,
 Team OmniMart
 `;
         
-        await sendEmail(req.user.email, "Order Placed", message);
-
+try {
+    await sendEmail(req.user.email, "Order Placed", message);
+} catch (err) {
+    console.error("Email sending failed:", err);
+}
         return res.status(201).json({
             message: "Order created successfully",
             order
@@ -88,15 +91,18 @@ Team OmniMart
 
     } catch (error) {
 
+    if (session.inTransaction()) {
         await session.abortTransaction();
-        session.endSession();
-
-        console.error(error);
-
-        return res.status(500).json({
-            message: error.message
-        });
     }
+
+    session.endSession();
+
+    console.error(error);
+
+    return res.status(500).json({
+        message: error.message
+    });
+}
 };
 
 const myOrders = async (req,res) => {
