@@ -1,6 +1,6 @@
+const path = require("path");
 const express = require("express")
 const cors = require("cors")
-
 require("dotenv").config();
 const connectDB = require("./config/db.js");
 const userRoutes = require("./routes/authRoutes.js")
@@ -15,9 +15,6 @@ app.use(cors(
 ))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.get("/", (req, res) => {
-    res.send("backend is working")
-})
 app.use('/api/auth', userRoutes)
 app.use('/api/products', require('./routes/productRoutes.js'))
 app.use('/api/payment', require('./routes/paymentRoutes') )
@@ -26,9 +23,9 @@ app.use('/api/analytics', require('./routes/analyticsRoutes.js'))
 
 
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(Path.join(__dirname, '../frontend/build')))
-    app.use((req, res) => {
-        res.sendFile(path.resolve(__dirname, '../frontend/build/index.html'));
+    app.use(express.static(path.join(__dirname, '../frontend/dist')))
+    app.use("*",(req, res) => {
+        res.sendFile(path.resolve(__dirname, '../frontend/dist/index.html'));
 
     })
 
